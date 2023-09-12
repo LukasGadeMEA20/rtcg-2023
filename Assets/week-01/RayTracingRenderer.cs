@@ -55,13 +55,23 @@ namespace Week01
                     // TODO
                     // find appropriate pixel location in the space of the screen quad
                     // (assumes quad is 1x1 units, with normal == local -z)
+                    Vector3 offset = new Vector3((float)i / (float)screenPixels - .5f, (float)j / (float)screenPixels - .5f, 0);
+                    offset.x *= screen.transform.lossyScale.x;
+                    offset.y *= screen.transform.lossyScale.y;
+                    Vector3 pos = screen.transform.position + offset;
+                    Vector3 direction = (pos-camera.transform.position).normalized;
 
                     // TODO
                     // create primary (from camera to scene, though pixel (i,j) ) ray 
+                    Ray ray = new Ray(camera.transform.position, direction);
+                    RaycastHit hit;
 
                     // TODO
                     // send your ray to the IntersectionTest function
-                    colorBuffer[j * screenPixels + i] = (Color32) backgroundColor;// IntersectionTest(ray, maxBounces);
+                    if(Physics.Raycast(ray, out hit)){
+                        //IntersectionTest(ray, maxBounces);
+                        colorBuffer[j * screenPixels + i] = ComputeLighting(hit.point, hit.normal);;// IntersectionTest(ray, maxBounces);
+                    }
 
                 }
             }
@@ -100,12 +110,17 @@ namespace Week01
             // Optional feature: shadows can be computer here. With ray tracing, we can use a shadow ray, that is,
             // a ray from the intersection position towards the light. If the light is occluded by geometry,
             // this means that this point is in shadow.
+            RaycastHit hit;
+            Ray ray = new Ray(position, lightSource.transform.position);
 
+            if(Physics.Raycast(ray, out hit, float.MaxValue)){
+                return backgroundColor;
+            }
 
             // Light computation with diffuse and ambient contributions
             float diffuseIntensity = Mathf.Max(0, Vector3.Dot(normal, -lightSource.transform.forward));
             Color color = (diffuseIntensity * objectColor * lightSource.color);
-
+            
             return color;
         }
 
