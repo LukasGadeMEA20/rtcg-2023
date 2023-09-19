@@ -129,7 +129,7 @@ namespace Week01
             }
 
             // Light computation with diffuse and ambient contributions
-            float diffuseIntensity = Mathf.Max(0, Vector3.Dot(normal, -lightSource.transform.forward)) * lightVisibility;
+            float diffuseIntensity = Mathf.Max(0, Vector3.Dot(normal, -lightSource.transform.forward));
             Color color = (diffuseIntensity * objectColor * lightSource.color);
             
             return color;

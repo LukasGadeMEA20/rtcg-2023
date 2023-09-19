@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UIElements;
 
 namespace Week02
 {
@@ -32,9 +33,15 @@ namespace Week02
         Matrix4x4 OurTRS(Vector3 position, Vector3 rotation, Vector3 scale) {
             // TODO 1. create the translation matrix
             Matrix4x4 T = Matrix4x4.identity;
+            T.m03 = position.x;
+            T.m13 = position.y;
+            T.m23 = position.z;
 
             // TODO 2. create the rotation matrix
             Matrix4x4 S = Matrix4x4.identity;
+            S.m00 = scale.x;
+            S.m11 = scale.y;
+            S.m22 = scale.z;
 
             // TODO 3. create three rotation matrices, one per rotation axis/euler angle
             // rotationX is given as an example
@@ -46,20 +53,33 @@ namespace Week02
             RX.m22 = Mathf.Cos(angleRad);
 
             Matrix4x4 RY = Matrix4x4.identity;
+            angleRad = Mathf.Deg2Rad * rotation.y;
+            RY.m00 = Mathf.Cos(angleRad);
+            RY.m02 = Mathf.Sin(angleRad);
+            RY.m20 = -Mathf.Sin(angleRad);
+            RY.m22 = Mathf.Cos(angleRad);
 
             Matrix4x4 RZ = Matrix4x4.identity;
+            angleRad = Mathf.Deg2Rad * rotation.z;
+            RZ.m00 = Mathf.Cos(angleRad);
+            RZ.m01 = -Mathf.Sin(angleRad);
+            RZ.m10 = Mathf.Sin(angleRad);
+            RZ.m11 = Mathf.Cos(angleRad);
 
             // TODO 4. concatenate the 3 rotation matrices
             // remember that, when using euler angles, rotation order matters!
             // by default, Unity implements the order Rotation Z -> then X -> then Y
             Matrix4x4 R = Matrix4x4.identity; // R = multiply RX, RY and RZ in the correct order
-
+            R = RY * RX * RZ * R;
 
             // TODO 5. concatenate translation, scale and rotation into a single matrix, and return the result
             // first Scale -> then Rotation -> and Translation last
             // notice that because we use column vectors, 
             // transformations are applied from RIGHT TO LEFT
-            return Matrix4x4.identity;
+            Matrix4x4 result  = Matrix4x4.identity;
+            result = T * R * S;
+
+            return T * R * S * Matrix4x4.identity;
         }
 
 
