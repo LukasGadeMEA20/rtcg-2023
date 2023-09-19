@@ -55,11 +55,13 @@ namespace Week01
                     // TODO
                     // find appropriate pixel location in the space of the screen quad
                     // (assumes quad is 1x1 units, with normal == local -z)
-                    Vector3 offset = new Vector3((float)i / (float)screenPixels - .5f, (float)j / (float)screenPixels - .5f, 0);
-                    offset.x *= screen.transform.lossyScale.x;
-                    offset.y *= screen.transform.lossyScale.y;
-                    Vector3 pos = screen.transform.position + offset;
-                    Vector3 direction = (pos-camera.transform.position).normalized;
+
+                    Vector3 localPos = new Vector3(step.x * (i + .5f) - .5f, step.y * (j + .5f) - .5f, 0f);
+                    localPos.x *= screen.transform.lossyScale.x;
+                    localPos.y *= screen.transform.lossyScale.y;
+                    Vector3 pixelPosition = screen.transform.position + screen.transform.rotation * localPos;
+
+                    Vector3 direction = (pixelPosition - camera.transform.position).normalized;
 
                     // TODO
                     // create primary (from camera to scene, though pixel (i,j) ) ray 
@@ -93,6 +95,15 @@ namespace Week01
 
 
                 // Optional feature: here you can implement recursive intersection test for rendering reflections, until bounces == 0
+                // Optional feature: here you can implement recursive intersection test for rendering reflections, until bounces == 0
+                if (bounces > 0)
+                {
+                    // mix this intersection color and next bounce color and return
+                    Ray reflectionRay = new Ray(hit.point, Vector3.Reflect(ray.direction, hit.normal));
+                    Color reflectionColor = IntersectionTest(reflectionRay, bounces - 1);
+                    color = Color.Lerp(color, reflectionColor, reflectiveness);
+                }
+
 
                 // draw the rays on the editor, to help you visualizing and debugging
                 if (drawDebugLines)
@@ -118,7 +129,7 @@ namespace Week01
             }
 
             // Light computation with diffuse and ambient contributions
-            float diffuseIntensity = Mathf.Max(0, Vector3.Dot(normal, -lightSource.transform.forward));
+            float diffuseIntensity = Mathf.Max(0, Vector3.Dot(normal, -lightSource.transform.forward)) * lightVisibility;
             Color color = (diffuseIntensity * objectColor * lightSource.color);
             
             return color;

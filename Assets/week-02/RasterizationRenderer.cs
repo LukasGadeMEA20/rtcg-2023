@@ -122,13 +122,18 @@ namespace Week02
 
                 else if (rasterizationMode == RasterizationMode.lines)
                 {
-                    for (int ti = 0; ti < indices.Length; ti += 2)
+                    for (int ti = 0; ti < indices.Length; ti += 3)
                     {
                         var v1 = vertices[indices[ti]];
                         var v2 = vertices[indices[ti + 1]];
-                        var n = (normals[indices[ti]] + normals[indices[ti + 1]]) / 2f;
+                        var v3 = vertices[indices[ti + 2]];
+                        var n1 = (normals[indices[ti]] + normals[indices[ti + 1]]) / 2f;
+                        var n2 = (normals[indices[ti + 1]] + normals[indices[ti + 2]]) / 2f;
+                        var n3 = (normals[indices[ti + 2]] + normals[indices[ti]]) / 2f;
 
-                        RasterizeLine(v1, v2, n);
+                        RasterizeLine(v1, v2, n1);
+                        RasterizeLine(v2, v3, n2);
+                        RasterizeLine(v3, v1, n3);
                     }
                 }
 
@@ -169,6 +174,7 @@ namespace Week02
         void RasterizeLine(Vector3 v1, Vector3 v2, Vector3 normal)
         {
             // - Line rasterization is not implemented. This is a challenge for you ;)
+
         }
 
 

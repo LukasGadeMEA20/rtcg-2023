@@ -427,7 +427,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 1806831331}
   screen: {fileID: 767624511}
-  screenPixels: 128
+  screenPixels: 256
   lightSource: {fileID: 262243413}
   objectColor: {r: 1, g: 1, b: 1, a: 1}
   backgroundColor: {r: 0, g: 0, b: 0, a: 1}
