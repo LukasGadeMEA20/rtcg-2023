@@ -9,6 +9,8 @@ Shader "Unlit/NewPhongShader"
         _Kd("Diffuse reflection", Range(0,1)) = 0.5 // Kd
         // TODO add the 'Specular intensity' and the 'Specular exponent' properties 
         // use the properties above as a reference
+        _Exp("Specular exponent", Range(0,64)) = 0.5
+        _Ks("Specular Intensity", Range(0,1)) = 0.5
 
 
     }
@@ -54,6 +56,8 @@ Shader "Unlit/NewPhongShader"
             float _Kd;
             // TODO add variables for 'Specular intensity' and the 'Specular exponent' properties 
             // remember that names must match, use the variables above as a reference
+            float _Exp;
+            float _Ks;
 
 
 
@@ -83,6 +87,8 @@ Shader "Unlit/NewPhongShader"
 
                 // sample the texture
                 float4 color = tex2D(_MainTex, i.uv);
+
+                float ambient = _Ia*_Ka;
                 
                 // diffuse contribution of the light, 'max' ensures it is not negative
                 float diffuse = _Kd * max(0, dot(normal, lightDirection));
@@ -91,6 +97,7 @@ Shader "Unlit/NewPhongShader"
                 // you will need to compute the half vector
                 // you will need the 'pow' (power), 'dot', and 'max' functions.
                 // search the hlsl decomentation to learn how to use it if necessary
+                float specular = _Ks * pow(max(0, dot(normal,normalize(lightDirection+view))),_Exp);
 
                 // we create our return variable, the final fragment color
                 fixed4 outColor = fixed4(0, 0, 0, 1);
@@ -99,7 +106,7 @@ Shader "Unlit/NewPhongShader"
                 // TODO add the ambient contribution
                 // TODO add the specular contribution        
                 outColor.rgb = 
-                    diffuse * color.rgb * _LightColor0.rgb;
+                    ambient + specular * _LightColor0.rgb + diffuse * color.rgb * _LightColor0.rgb;
 
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, outColor);
