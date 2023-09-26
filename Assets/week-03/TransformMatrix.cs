@@ -24,10 +24,10 @@ namespace Week02
             // using Position, Rotation and Scale:
             // transformation = Matrix4x4.TRS(position, Quaternion.Euler(rotation), scale);
             // we can also get the matrix from the transform with:
-            // transformation = transform.localToWorldMatrix;
+            transformation = transform.localToWorldMatrix;
             // but we want to create our own!
 
-            transformation = OurTRS(position, rotation, scale);
+           // transformation = OurTRS(position, rotation, scale);
         }
 
         Matrix4x4 OurTRS(Vector3 position, Vector3 rotation, Vector3 scale) {
